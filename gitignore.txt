@@ -1,0 +1,8 @@
+.gitignore
+get_next_line.pdf
+main.c
+text.txt
+Makefile
+*.o
+*.a
+p
