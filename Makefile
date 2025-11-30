@@ -1,10 +1,10 @@
 NAME = libgnl.a
-SRC = get_next_line.c get_next_line_utils.c
+SRC = get_next_line.c get_next_line_utils.c main.c
 OBJ = $(SRC:.c=.o)
 PROGRAM = p
 
 MAIN = main.c
-BUFFER = -D BUFFER_SIZE=5
+BUFFER = -D BUFFER_SIZE=1
 LIBRARY = -L. -lgnl
 
 CC = cc
