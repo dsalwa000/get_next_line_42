@@ -13,25 +13,27 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-void override(char **str, char **c, int i)
+char  *override(char **str, char **c, size_t i)
 {
-  int j;
+  size_t j;
   char *h;
 
-  h = malloc(ft_strlen(*str) - 1);
+  h = malloc(ft_strlen(*str) - i + 1);
+  // printf("i: %zu\n", i);
+  // printf("(*str)[i]: %c\n", (*str)[i]);
   if (!h)
   {
-    free(c);
-    return;
+    return(free(h), free(*c), NULL);
   }
   j = 0;
   while ((*str)[i] != '\0')
   {
     h[j++] = (*str)[i++];
   }
+  h[j] = '\0';
 
-  *str = h;
-  // printf("str inside override: %s\n", *str);
+  // printf("h inside override: %s\n", h);
+  return (free(*str), *str = h, *c);
 }
 
 char  *return_str(char **str, size_t length)
@@ -39,6 +41,7 @@ char  *return_str(char **str, size_t length)
   char *c;
   size_t i;
 
+  // printf("*str: %s\n", *str);
   c = malloc(length + 1);
   if (!c)
   {
@@ -46,39 +49,33 @@ char  *return_str(char **str, size_t length)
   }
   i = 0;
   // printf("length: %zu\n", length);
-  // printf("i for return loop: %zu\n", i);
-  // printf("(*str)[i]: %c\n", (*str)[i]);
-  if (length == 1 && ((*str)[i] == '\n'))
+  if (length == 1 && ((*str)[0] == '\n'))
   {
-    // printf("first if inside return\n");
-    return (c[i] = (*str)[i], i++, c[i + 1] = '\0', override(str, &c, i), c);
+    return (c[i] = (*str)[i], i++, c[i] = '\0', override(str, &c, i));
   }
   while (length > i)
   {
-    // printf("inside return while");
     c[i] = (*str)[i];
+    // printf("c: %c\n", c[i]);
+    // printf("i: %zu\n", i);
     i++;
-    if ((*str)[i] == '\n')
+    if ((*str)[i] == '\n' && length > 1)
     {
       c[i] = (*str)[i];
       i++;
       break;
-    } 
+    }
   }
   // printf("c: %s\n", c);
-  return (c[i + 1] = '\0', override(str, &c, i), c);
+  return (c[i] = '\0', i++, override(str, &c, i));
 }
 
 char  *get_next_line(int fd)
 {
   char *buffor;
   static char *str;
-  // static int times = 1;
   size_t i;
   size_t n;
-
-  // printf("Called for a: %d time\n", times);
-  // times++;
 
   buffor = malloc(BUFFOR_SIZE + 1);
   if (!buffor)
@@ -91,11 +88,15 @@ char  *get_next_line(int fd)
   {
     // printf("buffor content: %s\n", buffor);
     str = ft_strjoin(str, buffor);
+    // printf("str_len(str): %zu\n", ft_strlen(str));
     while (str[i] != '\n' && ft_strlen(str) > i)
     {
+      // printf("%zu\n", i);
+      // printf("%c\n", str[i]);
       i++;
     }
-    // printf("i inside gnl: %zu\n", i); 
+    // printf("c inside gnl: %c\n", str[i]);
+    // printf("i inside gnl: %zu\n", i);
     // printf("last: %c\n", str[i]);
     if (i == 0 && str[i] == '\n')
     {
@@ -106,13 +107,14 @@ char  *get_next_line(int fd)
     if (ft_strlen(str) != i || (n == 0 && ft_strlen(str) > 0))
     {
       // printf("here we go\n");
-      return (return_str(&str, i));
+      return (free(buffor), return_str(&str, i));
     }
     // printf("read\n");
-    if ((n = read(fd, buffor, BUFFOR_SIZE)) == 0)
+    if ((n = read(fd, ft_memset(buffor, 0, BUFFOR_SIZE + 1), BUFFOR_SIZE)) == 0)
     {
       buffor = NULL;
     }
   }
+  free(buffor);
   return NULL;
-} 
+}

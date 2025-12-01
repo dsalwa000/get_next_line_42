@@ -11,15 +11,5 @@ int main()
   printf(" gnl: %s", get_next_line(fd));
   printf(" gnl: %s", get_next_line(fd));
   printf(" gnl: %s", get_next_line(fd));
-  printf(" gnl: %s", get_next_line(fd));
-  printf(" gnl: %s", get_next_line(fd));
-  printf(" gnl: %s", get_next_line(fd));
-  printf(" gnl: %s", get_next_line(fd));
-  printf(" gnl: %s", get_next_line(fd));
-  printf(" gnl: %s", get_next_line(fd));
-  printf(" gnl: %s", get_next_line(fd));
-  printf(" gnl: %s", get_next_line(fd));
-  printf(" gnl: %s", get_next_line(fd));
-  printf(" gnl: %s", get_next_line(fd));
   return (0);
 }

@@ -4,7 +4,7 @@ OBJ = $(SRC:.c=.o)
 PROGRAM = p
 
 MAIN = main.c
-BUFFER = -D BUFFER_SIZE=1
+BUFFER = -D BUFFER_SIZE=5
 LIBRARY = -L. -lgnl
 
 CC = cc
