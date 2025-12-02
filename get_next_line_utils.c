@@ -6,7 +6,7 @@
 /*   By: dsalwa <dsalwa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 19:41:44 by dsalwa            #+#    #+#             */
-/*   Updated: 2025/11/19 20:50:17 by dsalwa           ###   ########.fr       */
+/*   Updated: 2025/12/02 22:06:21 by dsalwa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,4 +88,17 @@ void	*ft_memset(void *s, int c, size_t n)
 		ch++;
 	}
 	return (s);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	while (*s != '\0')
+	{
+		if (*s == (char)c)
+			return ((char *)s);
+		s++;
+	}
+	if ((char)c == *s)
+		return ((char *)s);
+	return (0);
 }

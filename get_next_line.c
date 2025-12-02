@@ -6,7 +6,7 @@
 /*   By: dsalwa <dsalwa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 19:00:11 by dsalwa            #+#    #+#             */
-/*   Updated: 2025/11/20 22:22:01 by dsalwa           ###   ########.fr       */
+/*   Updated: 2025/12/02 22:06:02 by dsalwa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,30 +36,26 @@ char  *override(char **str, char **c, size_t i)
   return (free(*str), *str = h, *c);
 }
 
-char  *return_str(char **str, size_t length)
+char  *return_str(char **str, size_t last_index)
 {
   char *c;
   size_t i;
 
-  // printf("*str: %s\n", *str);
-  c = malloc(length + 1);
+  c = malloc(last_index + 1);
   if (!c)
   {
     return NULL;
   }
   i = 0;
-  // printf("length: %zu\n", length);
-  if (length == 1 && ((*str)[0] == '\n'))
+  if (last_index == 0 && ((*str)[0] == '\n'))
   {
     return (c[i] = (*str)[i], i++, c[i] = '\0', override(str, &c, i));
   }
-  while (length > i)
+  while (last_index > i)
   {
     c[i] = (*str)[i];
-    // printf("c: %c\n", c[i]);
-    // printf("i: %zu\n", i);
     i++;
-    if ((*str)[i] == '\n' && length > 1)
+    if ((*str)[i] == '\n' && last_index > 1)
     {
       c[i] = (*str)[i];
       i++;
@@ -70,49 +66,40 @@ char  *return_str(char **str, size_t length)
   return (c[i] = '\0', i++, override(str, &c, i));
 }
 
+size_t length_of_a_return(char *str)
+{
+  size_t  i;
+
+  i = 0;
+  while (str[i] != '\0' && str[i] != '\n')
+  {
+    i++;
+  }
+  if (str[i] == '\n')
+  {
+    i++;
+  }
+  return  (i);
+}
+
 char  *get_next_line(int fd)
 {
   char *buffor;
   static char *str;
-  size_t i;
-  size_t n;
+  size_t read_chars;
 
   buffor = malloc(BUFFOR_SIZE + 1);
   if (!buffor)
   {
     return (NULL);
   }
-  n = read(fd, buffor, BUFFOR_SIZE);
-  i = 0;
-  while (n > 0 || (n == 0 && ft_strlen(str) > 0))
+  while (1)
   {
-    // printf("buffor content: %s\n", buffor);
+    read_chars = read(fd, ft_memset(buffor, 0, BUFFOR_SIZE + 1), BUFFOR_SIZE);
     str = ft_strjoin(str, buffor);
-    // printf("str_len(str): %zu\n", ft_strlen(str));
-    while (str[i] != '\n' && ft_strlen(str) > i)
+    if ((read_chars < 0 && !ft_strchr(str, '\n')) || ft_strchr(str, '\n'))
     {
-      // printf("%zu\n", i);
-      // printf("%c\n", str[i]);
-      i++;
-    }
-    // printf("c inside gnl: %c\n", str[i]);
-    // printf("i inside gnl: %zu\n", i);
-    // printf("last: %c\n", str[i]);
-    if (i == 0 && str[i] == '\n')
-    {
-      i++;
-    }
-    // printf("i inside gnl after if: %zu\n", i);
-    // printf("str after strjoin: %s\n", str);
-    if (ft_strlen(str) != i || (n == 0 && ft_strlen(str) > 0))
-    {
-      // printf("here we go\n");
-      return (free(buffor), return_str(&str, i));
-    }
-    // printf("read\n");
-    if ((n = read(fd, ft_memset(buffor, 0, BUFFOR_SIZE + 1), BUFFOR_SIZE)) == 0)
-    {
-      buffor = NULL;
+      return (free(buffor), return_str(&str, length_of_a_return(str)));
     }
   }
   free(buffor);
