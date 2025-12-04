@@ -13,57 +13,59 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-char  *override(char **str, char **c, size_t i)
+char  *override(char **str, char **c, size_t found_index)
 {
   size_t j;
   char *h;
 
-  h = malloc(ft_strlen(*str) - i + 1);
+  h = malloc(ft_strlen(*str) - found_index);
   if (!h)
   {
-    return(free(h), free(*c), NULL);
+    return(free(h), free(*str), free(*c), NULL);
   }
   j = 0;
-  while ((*str)[i] != '\0')
+  found_index++;
+  while (ft_strlen(*str) > found_index)
   {
-    h[j++] = (*str)[i++];
+    h[j++] = (*str)[found_index++];
   }
-  h[j] = '\0';
-
-  return (free(*str), *str = h, *c);
+  if ((*str)[found_index] == '\n')
+  {
+    h[j++] = '\n';
+  }
+  return (h[j] = '\0', free(*str), *str = h, *c);
 }
 
-char  *return_str(char **str, size_t length_of_return)
+char  *return_str(char **str, size_t found_index)
 {
   char *c;
   size_t i;
 
-  c = malloc(length_of_return);
+  c = malloc(found_index + 1);
   if (!c)
   {
     return NULL;
   }
-  printf("hey");
   i = 0;
-  if (length_of_return == 0 && ((*str)[0] == '\n'))
+  if (found_index == 0 && ((*str)[0] == '\n'))
   {
-    return (c[i] = (*str)[i], i++, c[i] = '\0', override(str, &c, i));
+    return (c[i] = (*str)[i], i++, c[i] = '\0', override(str, &c, found_index));
   }
-  while (length_of_return > i)
+  while (found_index > i)
   {
     c[i] = (*str)[i];
     i++;
-    if ((*str)[i] == '\n' && length_of_return > 1)
+    if ((*str)[i] == '\n' && found_index > 1)
     {
       c[i] = (*str)[i];
       i++;
       break;
     }
   }
-  return (c[i] = '\0', i++, override(str, &c, i));
+  return (c[i] = '\0', override(str, &c, found_index));
 }
 
-size_t final_length_of_return(char *str)
+size_t find_nl_or_zero_index(char *str)
 {
   size_t  i;
 
@@ -72,35 +74,34 @@ size_t final_length_of_return(char *str)
   {
     i++;
   }
-  if (str[i] == '\n')
-  {
-    i++;
-  }
   return  (i);
 }
 
 char  *get_next_line(int fd)
 {
-  char *buffor;
-  static char *str;
-  size_t read_chars;
+  char *read_buffor;
+  static char *static_str;
+  size_t amount_of_read_chars;
 
-  buffor = malloc(BUFFOR_SIZE + 1);
-  if (!buffor)
+  if (fd < 0 || BUFFOR_SIZE <= 0)
+    return (NULL);
+  read_buffor = malloc(BUFFOR_SIZE + 1);
+  if (!read_buffor)
   {
     return (NULL);
   }
-  // while (1)
-  // {
-  read_chars = read(fd, ft_memset(buffor, 0, BUFFOR_SIZE + 1), BUFFOR_SIZE);
-  str = ft_strjoin(str, buffor);
-  printf("%zu\n", final_length_of_return(str));
-  printf("%zu\n", read_chars);
-  if ((read_chars == 0 && ft_strlen(str)) || ft_strchr(str, '\n'))
+  while (1)
   {
-    return (free(buffor), return_str(&str, final_length_of_return(str)));
+    amount_of_read_chars = read(fd, ft_memset(read_buffor, 0, BUFFOR_SIZE + 1), BUFFOR_SIZE);
+    static_str = ft_strjoin(static_str, read_buffor);
+    if (ft_strchr(static_str, '\n') || (ft_strlen(static_str) > 0 && amount_of_read_chars == 0))
+    {
+      return (free(read_buffor), return_str(&static_str, find_nl_or_zero_index(static_str)));
+    }
+    if (amount_of_read_chars == 0) 
+    {
+      break;
+    }
   }
-  // }
-  free(buffor);
-  return NULL;
+  return (free(read_buffor), NULL);
 }

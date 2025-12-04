@@ -5,7 +5,7 @@
 #define GET_NEXT_LINE_H
 
 #ifndef BUFFOR_SIZE
-  #define BUFFOR_SIZE 5
+  #define BUFFOR_SIZE 42
 #endif
 
 char  *get_next_line(int fd);

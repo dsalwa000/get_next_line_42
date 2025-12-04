@@ -4,7 +4,7 @@ OBJ = $(SRC:.c=.o)
 PROGRAM = p
 
 MAIN = main.c
-BUFFER = -D BUFFER_SIZE=5
+BUFFER = -D BUFFER_SIZE=42
 LIBRARY = -L. -lgnl
 
 CC = cc
@@ -26,6 +26,6 @@ clean:
 	rm -f $(OBJ)
 
 fclean: clean
-	rm -f $(NAME) libft.a
+	rm -f $(NAME) $(PROGRAM) libft.a
 
 re: fclean all
