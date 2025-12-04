@@ -65,7 +65,7 @@ char  *return_str(char **str, size_t found_index)
   return (c[i] = '\0', override(str, &c, found_index));
 }
 
-size_t find_nl_or_zero_index(char *str)
+size_t  find_nl_or_zero_index(char *str)
 {
   size_t  i;
 
